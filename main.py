@@ -99,7 +99,11 @@ if __name__ == '__main__':
         while True:
 
             linedata = f.readline()
-            if not linedata:break
+            if not linedata:
+                with open("./case%s.xlsx"%index, 'wb') as outf:
+                        outf.write(data.export('xlsx'))
+                        outf.close()
+                break
             linedata = linedata.replace("\"{\"CASE\"","{\"CASE\"").replace("\"}\",\"ADDR","\"},\"ADDR")
             linedata = linedata.replace("\"{\"case_state\"","{\"case_state\"")
             linedata = linedata.replace("\"{\"policeJson\"","{\"policeJson\"")
