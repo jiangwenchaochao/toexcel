@@ -1,9 +1,6 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
-from ast import Try
-from email.policy import strict
 import json
-import pandas as pd
 import os
 import tablib
 import re
@@ -33,35 +30,12 @@ def tranform1():
         f.close()
 
 def conver(str):
-    # p1 = re.compile("[\u4e00-\u9fa5]\"[\u4e00-\u9fa5]+") #汉字之间引号
-    # p2 = re.compile("[[0-9]]\"[\u4e00-\u9fa5]+") # 数字 + " + 汉字
-    # p3 = re.compile("\)\"[\u4e00-\u9fa5]+") # ) + " + 汉字
-    # p4 = re.compile("[\u4e00-\u9fa5]\"\(+") # 汉字+" + （
+    #正则去除json中的 非法字符
     p5 = re.compile("[0-9]\:[0-9]+") #。+"+ 汉字
     p6 = re.compile("[(a-z)(A-Z)(0-9)(\u4e00-\u9fa5) \u8fc7 （ \(   。：，、][ \"]  +[、 ，（。： \((\u4e00-\u9fa5 )(0-9)(a-z)(A-Z)]") #。 汉字 : 汉字
     p7 = re.compile("[(\u4e00-\u9fa5) （ \(   。：，][ \":,  ]+[ ，（。： \((\u4e00-\u9fa5 )]") #。 汉字 : 汉字
     def func(m):
         return m.group().replace("\"","“").replace(":","：").replace(",","，")
-    # while True:
-    #     m1 = p1.search(str)
-    #     if not m1 : break
-    #     str = p1.sub(func,str)
-    # while True:
-    #     m1 = p2.search(str)
-    #     if not m1 : break
-    #     str = p2.sub(func,str)
-    # while True:
-    #     m1 = p3.search(str)
-    #     if not m1 : break
-    #     str = p3.sub(func,str)
-    # while True:
-    #     m1 = p4.search(str)
-    #     if not m1 : break
-    #     str = p4.sub(func,str)
-    # while True:
-    #     m1 = p5.search(str)
-    #     if not m1 : break
-    #     str = p5.sub(func,str)
 
     temp = 0
     while True:
@@ -99,7 +73,11 @@ if __name__ == '__main__':
         while True:
 
             linedata = f.readline()
-            if not linedata:break
+            if not linedata:
+                with open("./case%s.xlsx"%index, 'wb') as outf:
+                        outf.write(data.export('xlsx'))
+                        outf.close()
+                break
             linedata = linedata.replace("\"{\"CASE\"","{\"CASE\"").replace("\"}\",\"ADDR","\"},\"ADDR")
             linedata = linedata.replace("\"{\"case_state\"","{\"case_state\"")
             linedata = linedata.replace("\"{\"policeJson\"","{\"policeJson\"")
@@ -116,7 +94,7 @@ if __name__ == '__main__':
                 row = json.loads(linedata,strict=False)
                 index=index + 1
                 index1=index1 + 1
-                if index1 >= 10000:
+                if index1 >= 20000:
                     with open("./case%s.xlsx"%index, 'wb') as outf:
                         outf.write(data.export('xlsx'))
                         outf.close()
@@ -147,16 +125,4 @@ if __name__ == '__main__':
             except:
                 print(linedata)
 
-    
-
-    # with open('./case.xlsx', 'wb') as outf:
-    
-    #     outf.write(data.export('xlsx'))
-    #     outf.close()
-        # body = []
-        # for k, v in row.items():
-        #     if k == '_source':
-        #         for itk,itv in v.items():
-        #             body.append(itv)
-        # data.append(tuple(body))
             
